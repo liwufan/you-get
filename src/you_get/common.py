@@ -678,14 +678,13 @@ class SimpleProgressBar:
             self.speed = '{:4.0f}  B/s'.format(bytes_ps)
 
         self.dl_count = self.dl_count + 1
-        currTime=time.time()
-        currRemain=self.total_size-self.received
 
         if self.dl_count == 99:
             self.dl_count =0
 
+            currTime=time.time()
+            currRemain=self.total_size-self.received
             estime = currRemain/(self.preRemain - currRemain)*(currTime - self.preTime)
-
             hour = int(estime / 3600)
             minu = int((estime - hour * 3600)/60)
             seco = int(estime - hour * 3600 - minu*60)
@@ -704,7 +703,6 @@ class SimpleProgressBar:
 
         self.last_updated = time.time()
         self.update()
-
 
     def update_piece(self, n):
         self.current_piece = n
