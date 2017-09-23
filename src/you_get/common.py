@@ -632,6 +632,10 @@ class SimpleProgressBar:
         self.received = 0
         self.speed = ''
         self.last_updated = time.time()
+        self.dl_count = 0
+        self.preTime = time.time()
+        self.preRemain = self.total_size-self.received
+
 
         total_pieces_len = len(str(total_pieces))
         # 38 is the size of all statically known size in self.bar
@@ -672,8 +676,35 @@ class SimpleProgressBar:
             self.speed = '{:4.0f} kB/s'.format(bytes_ps / 1024)
         else:
             self.speed = '{:4.0f}  B/s'.format(bytes_ps)
+
+        self.dl_count = self.dl_count + 1
+        currTime=time.time()
+        currRemain=self.total_size-self.received
+
+        if self.dl_count == 99:
+            self.dl_count =0
+
+            estime = currRemain/(self.preRemain - currRemain)*(currTime - self.preTime)
+
+            hour = int(estime / 3600)
+            minu = int((estime - hour * 3600)/60)
+            seco = int(estime - hour * 3600 - minu*60)
+
+            if estime >= 86400:
+                print('est','over a day')
+            elif estime >= 3600:
+                print ('est',hour,'hour',minu,'min',seco,'s')
+            elif estime >= 60:
+                print ('est',minu,'min',seco,'s')
+            else:
+                print('est',seco,'s')
+
+            self.preTime = time.time()
+            self.preRemain = self.total_size-self.received
+
         self.last_updated = time.time()
         self.update()
+
 
     def update_piece(self, n):
         self.current_piece = n
